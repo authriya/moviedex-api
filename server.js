@@ -29,19 +29,22 @@ app.get('/movie', function handleGetMovies(req, res) {
         response = response.filter(movie =>
             movie.genre.toLowerCase().includes(req.query.genre.toLowerCase()))
         if (response.length === 0) {
-            return 'This genre is not in our system. Please try again'
+            return res.status(404).json({ error: 'This genre is not in our movie set'})
         }
     }
     if(req.query.country) {
         response = response.filter(movie =>
             movie.country.toLowerCase().includes(req.query.country.toLowerCase()))
         if (response.length === 0) {
-            return 'Movies from this country are not in our system. Please try again'
+            return res.status(404).json({ error: 'This country is not in our movie set'})
         }
     }
     if(req.query.avg_vote) {
         response = response.filter(movie =>
             Number(movie.avg_vote) >=  Number(req.query.avg_vote))
+        if (response.length === 0) {
+            return res.status(404).json({ error: `We don\'t have any movies with ratings equal to or greater than ${Number(req.query.avg_vote)}. Either change the other queries or the rating`})
+        }
     }
 
     res.json(response)
